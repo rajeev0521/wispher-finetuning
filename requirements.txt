@@ -1,0 +1,35 @@
+# Core ML & Audio
+torch>=2.0.0
+torchaudio>=2.0.0
+transformers>=4.36.0
+datasets>=2.16.0
+accelerate>=0.25.0
+evaluate>=0.4.0
+
+# Audio Processing
+librosa>=0.10.0
+soundfile>=0.12.0
+pydub>=0.25.1
+
+# WER Computation
+jiwer>=3.0.0
+
+# Hindi NLP
+indic-nlp-library>=0.92
+# polyglot  # install separately: pip install polyglot pycld2 morfessor
+
+# Data Processing
+pandas>=2.0.0
+numpy>=1.24.0
+requests>=2.31.0
+
+# Visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Transliteration
+indic-transliteration>=2.3.0
+
+# Utilities
+tqdm>=4.66.0
+ipywidgets>=8.0.0
