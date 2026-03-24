@@ -295,6 +295,133 @@ def segment_audio(
 
 
 # ============================================================================
+# DATA FILTERING (Optimization)
+# ============================================================================
+
+def filter_bad_samples(
+    segments: List[Dict],
+    min_duration: float = 1.0,
+    max_duration: float = 25.0,
+    min_text_length: int = 2,
+    remove_outliers: bool = True,
+    outlier_sigma: float = 3.0,
+) -> List[Dict]:
+    """
+    Remove segments that would harm training efficiency or quality.
+    
+    Filters:
+      - Too short (<1s): insufficient audio context, mostly noise
+      - Too long (>25s): causes OOM spikes and excessive padding
+      - Empty/near-empty transcriptions: no learning signal
+      - Statistical duration outliers (>3σ from mean)
+    
+    This typically removes ~5-15% of samples while improving convergence.
+    
+    Args:
+        segments: List of segment dicts with 'duration', 'text' keys
+        min_duration: Minimum segment duration in seconds
+        max_duration: Maximum segment duration in seconds
+        min_text_length: Minimum transcription character count
+        remove_outliers: Whether to remove statistical outliers
+        outlier_sigma: Number of std devs for outlier detection
+    
+    Returns:
+        Filtered list of segments
+    """
+    original_count = len(segments)
+    
+    # Basic filters
+    filtered = [
+        s for s in segments
+        if s.get('duration', 0) >= min_duration
+        and s.get('duration', 0) <= max_duration
+        and len(s.get('text', '').strip()) >= min_text_length
+    ]
+    
+    # Statistical outlier removal
+    if remove_outliers and filtered:
+        durations = np.array([s['duration'] for s in filtered])
+        mean_dur = np.mean(durations)
+        std_dur = np.std(durations)
+        lower = max(min_duration, mean_dur - outlier_sigma * std_dur)
+        upper = min(max_duration, mean_dur + outlier_sigma * std_dur)
+        filtered = [s for s in filtered if lower <= s['duration'] <= upper]
+    
+    removed = original_count - len(filtered)
+    logger.info(
+        f"🧹 Data filtering: {original_count} → {len(filtered)} segments "
+        f"(removed {removed}, {100*removed/max(original_count,1):.1f}%)"
+    )
+    
+    return filtered
+
+
+# ============================================================================
+# CACHED DATASET PREPROCESSING (Optimization)
+# ============================================================================
+
+def prepare_dataset_cached(dataset, processor, num_proc: int = 1, cache_dir: str = None):
+    """
+    Apply prepare_dataset with HuggingFace Arrow caching.
+    
+    Features are computed once and cached to disk. On subsequent runs,
+    cached features are loaded in seconds instead of re-running librosa
+    on every audio file.
+    
+    Args:
+        dataset: HuggingFace Dataset (with 'audio_path' and 'sentence' columns)
+        processor: WhisperProcessor instance
+        num_proc: Number of parallel processes for .map() (1 for Windows)
+        cache_dir: Optional cache directory override
+    
+    Returns:
+        Preprocessed dataset with 'input_features' and 'labels' columns
+    """
+    from src.whisper_trainer import prepare_dataset
+    from functools import partial
+    
+    map_fn = partial(prepare_dataset, processor=processor)
+    
+    logger.info(f"🔄 Preprocessing dataset ({len(dataset)} samples) with caching enabled...")
+    
+    processed = dataset.map(
+        map_fn,
+        remove_columns=dataset.column_names,
+        num_proc=num_proc,
+        desc="Extracting features",
+        keep_in_memory=False,  # Save to disk cache
+    )
+    
+    logger.info(f"✅ Preprocessing complete. Cached to: {processed.cache_files}")
+    
+    return processed
+
+
+def add_input_length_column(dataset):
+    """
+    Add 'input_length' column for group_by_length batching.
+    
+    When used with `group_by_length=True` in training args, samples of
+    similar length are batched together, reducing padding waste by 20-40%.
+    
+    Args:
+        dataset: Preprocessed HuggingFace Dataset with 'input_features'
+    
+    Returns:
+        Dataset with added 'input_length' column
+    """
+    def _get_length(example):
+        example["input_length"] = len(example["input_features"][0]) if isinstance(
+            example["input_features"], list
+        ) else example["input_features"].shape[-1]
+        return example
+    
+    dataset = dataset.map(_get_length, desc="Computing input lengths")
+    logger.info("✅ Added input_length column for length-bucketed batching")
+    return dataset
+
+
+# ============================================================================
 # DATASET BUILDING (HuggingFace format)
 # ============================================================================
 
@@ -306,6 +433,7 @@ def build_hf_dataset(
     """
     Build HuggingFace Dataset from segments.
     Splits by recording_id to prevent data leakage.
+    Includes duration for length-bucketed batching.
     
     Returns:
         (train_dataset, val_dataset)
@@ -329,18 +457,25 @@ def build_hf_dataset(
     logger.info(f"Train: {len(train_df)} segments from {len(train_ids)} recordings")
     logger.info(f"Val: {len(val_df)} segments from {len(val_ids)} recordings")
     
-    # Create HuggingFace datasets (audio paths stored as strings, loaded during preprocessing)
-    train_dataset = Dataset.from_dict({
-        'audio_path': train_df['audio_path'].tolist(),
-        'sentence': train_df['text'].tolist(),
-        'recording_id': train_df['recording_id'].tolist(),
-    })
+    # Create HuggingFace datasets — include duration for length bucketing
+    dataset_dict = {
+        'audio_path': 'audio_path',
+        'sentence': 'text',
+        'recording_id': 'recording_id',
+    }
     
-    val_dataset = Dataset.from_dict({
-        'audio_path': val_df['audio_path'].tolist(),
-        'sentence': val_df['text'].tolist(),
-        'recording_id': val_df['recording_id'].tolist(),
-    })
+    def _build_dataset(sub_df):
+        d = {
+            'audio_path': sub_df['audio_path'].tolist(),
+            'sentence': sub_df['text'].tolist(),
+            'recording_id': sub_df['recording_id'].tolist(),
+        }
+        if 'duration' in sub_df.columns:
+            d['duration'] = sub_df['duration'].tolist()
+        return Dataset.from_dict(d)
+    
+    train_dataset = _build_dataset(train_df)
+    val_dataset = _build_dataset(val_df)
     
     return train_dataset, val_dataset
 

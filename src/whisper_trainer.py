@@ -1,6 +1,16 @@
 """
-Whisper Fine-Tuning Trainer Module
+Whisper Fine-Tuning Trainer Module (Optimized)
 Complete training pipeline for fine-tuning Whisper-Small on Hindi ASR data.
+
+Optimizations applied:
+  - Gradient checkpointing (50% less VRAM)
+  - bf16/tf32 auto-detection for Ampere+ GPUs
+  - torch.compile for graph-mode speedup
+  - Gradient accumulation (effective batch=32)
+  - Encoder freezing callback (freeze epoch 1, unfreeze after)
+  - Early stopping (patience=3)
+  - Smarter eval/save frequency
+  - Parallel data loading
 """
 
 import torch
@@ -15,6 +25,8 @@ from transformers import (
     WhisperFeatureExtractor,
     Seq2SeqTrainer,
     Seq2SeqTrainingArguments,
+    EarlyStoppingCallback,
+    TrainerCallback,
 )
 import logging
 
@@ -57,6 +69,51 @@ class DataCollatorSpeechSeq2SeqWithPadding:
         batch["labels"] = labels
 
         return batch
+
+
+# ============================================================================
+# ENCODER FREEZING CALLBACK
+# ============================================================================
+
+class EncoderUnfreezeCallback(TrainerCallback):
+    """
+    Freezes the encoder at training start, unfreezes after `unfreeze_after_epoch`.
+    
+    Rationale: The pretrained encoder already excels at audio feature extraction.
+    Freezing it initially:
+      - Cuts trainable params by ~60% for the first epoch → much faster
+      - Prevents catastrophic forgetting of pretrained representations
+      - Lets the decoder (Hindi-specific) warm up first
+    After unfreezing, end-to-end fine-tuning continues for full performance.
+    """
+    def __init__(self, unfreeze_after_epoch: int = 1):
+        self.unfreeze_after_epoch = unfreeze_after_epoch
+        self._frozen = False
+
+    def on_train_begin(self, args, state, control, model=None, **kwargs):
+        if model is not None:
+            for param in model.model.encoder.parameters():
+                param.requires_grad = False
+            self._frozen = True
+            trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
+            total = sum(p.numel() for p in model.parameters())
+            logger.info(
+                f"🧊 Encoder FROZEN. Trainable: {trainable:,} / {total:,} params "
+                f"({100*trainable/total:.1f}%). Will unfreeze after epoch {self.unfreeze_after_epoch}."
+            )
+
+    def on_epoch_begin(self, args, state, control, model=None, **kwargs):
+        current_epoch = int(state.epoch) if state.epoch else 0
+        if self._frozen and current_epoch >= self.unfreeze_after_epoch and model is not None:
+            for param in model.model.encoder.parameters():
+                param.requires_grad = True
+            self._frozen = False
+            trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
+            total = sum(p.numel() for p in model.parameters())
+            logger.info(
+                f"🔥 Encoder UNFROZEN at epoch {current_epoch}. "
+                f"Trainable: {trainable:,} / {total:,} params ({100*trainable/total:.1f}%)."
+            )
 
 
 # ============================================================================
@@ -127,29 +184,88 @@ def create_compute_metrics(processor):
 
 
 # ============================================================================
+# HARDWARE DETECTION HELPERS
+# ============================================================================
+
+def _detect_precision():
+    """
+    Auto-detect the best precision mode for the current hardware.
+    Returns (fp16, bf16, tf32) booleans.
+    
+    - Ampere+ (compute capability >= 8.0): bf16=True, tf32=True
+    - Older CUDA GPUs: fp16=True
+    - CPU: all False
+    """
+    if not torch.cuda.is_available():
+        return False, False, False
+    
+    capability = torch.cuda.get_device_capability()
+    is_ampere_or_newer = capability[0] >= 8  # A100, A10, RTX 30xx, RTX 40xx, T4 is 7.5
+    
+    if is_ampere_or_newer:
+        logger.info(f"⚡ Ampere+ GPU detected (compute {capability[0]}.{capability[1]}). Using bf16 + tf32.")
+        return False, True, True  # fp16=False, bf16=True, tf32=True
+    else:
+        logger.info(f"🔋 Pre-Ampere GPU detected (compute {capability[0]}.{capability[1]}). Using fp16.")
+        return True, False, False  # fp16=True, bf16=False, tf32=False
+
+
+# ============================================================================
 # TRAINING CONFIGURATION
 # ============================================================================
 
+import os
+
 def get_training_args(
     output_dir: str = "./whisper-small-hi",
-    num_train_epochs: int = 7,
+    num_train_epochs: int = 4,
     per_device_train_batch_size: int = 16,
     per_device_eval_batch_size: int = 8,
     learning_rate: float = 1e-5,
-    warmup_steps: int = 500,
-    gradient_accumulation_steps: int = 1,
-    eval_steps: int = 500,
+    warmup_steps: int = 200,
+    gradient_accumulation_steps: int = 2,
+    eval_steps: int = 1000,
     save_steps: int = 1000,
     fp16: bool = None,
+    bf16: bool = None,
+    tf32: bool = None,
+    dataloader_num_workers: int = 0 if os.name == 'nt' else 4,
+    torch_compile: bool = False,
 ) -> Seq2SeqTrainingArguments:
     """
-    Configure training arguments for Whisper fine-tuning.
-    """
-    # Auto-detect fp16: only enable if CUDA is available
-    if fp16 is None:
-        fp16 = torch.cuda.is_available()
+    Configure optimized training arguments for Whisper fine-tuning.
     
-    return Seq2SeqTrainingArguments(
+    Key optimizations vs. original:
+      - Epochs: 7 → 4 (with early stopping)
+      - Gradient accumulation: 1 → 2 (effective batch = 32)
+      - bf16/tf32 auto-detected for Ampere+ GPUs
+      - Parallel data loading (num_workers=4)
+      - Less frequent eval (500 → 1000 steps)
+      - Warmup reduced (500 → 200 steps)
+      - torch.compile support
+    """
+    # Auto-detect precision if not explicitly set
+    if fp16 is None and bf16 is None:
+        fp16, bf16, tf32_auto = _detect_precision()
+        if tf32 is None:
+            tf32 = tf32_auto
+    else:
+        fp16 = fp16 or False
+        bf16 = bf16 or False
+        if tf32 is None:
+            tf32 = False
+    
+    # Enable tf32 globally if detected
+    if tf32:
+        torch.backends.cuda.matmul.allow_tf32 = True
+        torch.backends.cudnn.allow_tf32 = True
+    
+    # Auto-detect torch.compile support
+    if torch_compile and not hasattr(torch, 'compile'):
+        logger.warning("torch.compile not available (requires PyTorch 2.0+). Disabling.")
+        torch_compile = False
+    
+    args = Seq2SeqTrainingArguments(
         output_dir=output_dir,
         per_device_train_batch_size=per_device_train_batch_size,
         per_device_eval_batch_size=per_device_eval_batch_size,
@@ -158,6 +274,7 @@ def get_training_args(
         warmup_steps=warmup_steps,
         num_train_epochs=num_train_epochs,
         fp16=fp16,
+        bf16=bf16,
         eval_strategy="steps",
         eval_steps=eval_steps,
         save_strategy="steps",
@@ -173,8 +290,20 @@ def get_training_args(
         push_to_hub=False,
         remove_unused_columns=False,
         label_names=["labels"],
-        dataloader_num_workers=0,
+        dataloader_num_workers=dataloader_num_workers,
+        dataloader_pin_memory=True,
+        torch_compile=torch_compile,
+        optim="adamw_torch",
     )
+    
+    logger.info(
+        f"📋 Training config: epochs={num_train_epochs}, "
+        f"effective_batch={per_device_train_batch_size * gradient_accumulation_steps}, "
+        f"fp16={fp16}, bf16={bf16}, tf32={tf32}, "
+        f"compile={torch_compile}, workers={dataloader_num_workers}"
+    )
+    
+    return args
 
 
 # ============================================================================
@@ -186,16 +315,20 @@ def train_whisper(
     val_dataset,
     model_name: str = "openai/whisper-small",
     output_dir: str = "./whisper-small-hi",
+    freeze_encoder_epochs: int = 1,
+    early_stopping_patience: int = 3,
     **training_kwargs
 ):
     """
-    Full Whisper fine-tuning pipeline.
+    Optimized Whisper fine-tuning pipeline.
     
     Args:
         train_dataset: HuggingFace dataset (preprocessed with prepare_dataset)
         val_dataset: HuggingFace dataset (preprocessed with prepare_dataset)
         model_name: Base model to fine-tune
         output_dir: Where to save checkpoints
+        freeze_encoder_epochs: Freeze encoder for this many epochs (0 to disable)
+        early_stopping_patience: Stop if WER doesn't improve for N evals
         **training_kwargs: Override default training arguments
     
     Returns:
@@ -210,6 +343,12 @@ def train_whisper(
     model.generation_config.task = "transcribe"
     model.generation_config.forced_decoder_ids = None
     
+    # ── Optimization: Gradient checkpointing ──
+    # Trades ~20% compute for ~50% VRAM reduction
+    model.config.use_cache = False  # Required when gradient checkpointing is on
+    model.gradient_checkpointing_enable()
+    logger.info("✅ Gradient checkpointing enabled (saves ~50% VRAM)")
+    
     # Data collator
     data_collator = DataCollatorSpeechSeq2SeqWithPadding(
         processor=processor,
@@ -222,6 +361,18 @@ def train_whisper(
     # Training arguments
     training_args = get_training_args(output_dir=output_dir, **training_kwargs)
     
+    # ── Callbacks ──
+    callbacks = []
+    
+    # Early stopping: halt if WER doesn't improve for N evals
+    callbacks.append(EarlyStoppingCallback(early_stopping_patience=early_stopping_patience))
+    logger.info(f"✅ Early stopping enabled (patience={early_stopping_patience} evals)")
+    
+    # Encoder freezing: freeze for first N epochs
+    if freeze_encoder_epochs > 0:
+        callbacks.append(EncoderUnfreezeCallback(unfreeze_after_epoch=freeze_encoder_epochs))
+        logger.info(f"✅ Encoder will be frozen for first {freeze_encoder_epochs} epoch(s)")
+    
     # Trainer
     trainer = Seq2SeqTrainer(
         args=training_args,
@@ -231,16 +382,17 @@ def train_whisper(
         data_collator=data_collator,
         compute_metrics=compute_metrics,
         processing_class=processor.feature_extractor,
+        callbacks=callbacks,
     )
     
-    logger.info("Starting training...")
+    logger.info("🚀 Starting optimized training...")
     trainer.train()
     
     # Save best model
     trainer.save_model(output_dir)
     processor.save_pretrained(output_dir)
     
-    logger.info(f"Model saved to {output_dir}")
+    logger.info(f"💾 Model saved to {output_dir}")
     
     return trainer, model, processor
 
