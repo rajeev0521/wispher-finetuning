@@ -1,0 +1,3 @@
+Model,Hindi_WER
+Whisper Small (Pretrained),0.682007557407228
+FT Whisper Small (yours),0.37767658172657687

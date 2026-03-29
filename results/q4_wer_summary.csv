@@ -1,0 +1,8 @@
+model,standard_wer,lattice_wer,wer_reduction,improvement_%
+Model H,0.0331,0.0301,0.003,9.06
+Model i,0.0061,0.0326,-0.0265,-434.43
+Model k,0.1018,0.0302,0.0715,70.33
+Model l,0.1066,0.036,0.0706,66.23
+Model m,0.1956,0.0496,0.146,74.64
+Model n,0.1032,0.0311,0.0721,69.86
+Unnamed: 8,1.0,1.0,0.0,0.0

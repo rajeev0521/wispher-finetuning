@@ -459,7 +459,7 @@ def evaluate_on_fleurs(
     
     # Load FLEURS Hindi test set
     logger.info("Loading FLEURS Hindi test set...")
-    fleurs = load_dataset("google/fleurs", "hi_in", split="test")
+    fleurs = load_dataset("google/fleurs", "hi_in", split="test", trust_remote_code=True)
     
     model = model.to(device)
     model.eval()
