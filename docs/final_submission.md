@@ -1,4 +1,4 @@
-# Josh Talks — AI Researcher Intern (Speech & Audio)
+# AI Research — Speech & Audio
 
 ## Final Submission
 
@@ -21,11 +21,11 @@
 
 ### 1a. Data Preprocessing
 
-**Dataset:** ~10 hours of Hindi ASR training data (104 recordings) from Josh Talks GCP storage.
+**Dataset:** ~10 hours of Hindi ASR training data (104 recordings) from GCP storage.
 
 #### Preprocessing Pipeline
 
-1. **URL Fixing**: The provided GCS URLs used the old path format (`joshtalks-data-collection/hq_data/hi`). I wrote a mapping layer (`src/data_utils.py → fix_url()`) that automatically converts these to the working format: `https://storage.googleapis.com/upload_goai/{user_id}/{recording_id}_transcription.json`
+1. **URL Fixing**: The provided GCS URLs used the old path format (`old-data-collection/hq_data/hi`). I wrote a mapping layer (`src/data_utils.py → fix_url()`) that automatically converts these to the working format: `https://storage.googleapis.com/upload_goai/{user_id}/{recording_id}_transcription.json`
 
 2. **Data Download**: Downloaded audio files (`rec_url_gcp`), transcription JSONs (`transcription_url`), and metadata JSONs (`metadata_url`) for all 104 recordings. Robust retry logic handles network failures.
 
@@ -243,7 +243,7 @@ Numerical expressions misrecognized or output in wrong format.
 
 ### Data Generation
 
-Generated raw ASR transcripts by running the **pretrained whisper-small** (before fine-tuning) on 4,929 audio segments from the Josh Talks dataset. Each raw output is paired with its corresponding human reference transcription.
+Generated raw ASR transcripts by running the **pretrained whisper-small** (before fine-tuning) on 4,929 audio segments from the Hindi conversational dataset. Each raw output is paired with its corresponding human reference transcription.
 
 **Code:** [`notebooks/Q2_cleanup_pipeline.ipynb`](notebooks/Q2_cleanup_pipeline.py)
 
@@ -333,7 +333,7 @@ In raw ASR output from pretrained whisper-small, English word detection rates we
 
 ### Overview
 
-Processed **177,508 unique words** from the Josh Talks Hindi conversational dataset. These are human-transcribed words that need quality verification.
+Processed **177,508 unique words** from the Hindi conversational dataset. These are human-transcribed words that need quality verification.
 
 **Core Code:** [`src/spelling_checker.py`](src/spelling_checker.py) — `HindiSpellingChecker` (v2, 12-layer)
 
@@ -610,7 +610,7 @@ Lattice:   [मोन|मोनता|मौन|मौनता] [का|ता�
 ## Repository Structure
 
 ```
-JoshTech tasks/
+whisper-hindi-finetuning/
 ├── src/                              # Core Python modules
 │   ├── data_utils.py                 # URL fixing, downloading, segmentation, normalization
 │   ├── whisper_trainer.py            # Fine-tuning pipeline with encoder freezing, evaluation

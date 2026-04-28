@@ -21,10 +21,10 @@ logger = logging.getLogger(__name__)
 # URL FIXING
 # ============================================================================
 
-# Old format: https://storage.googleapis.com/joshtalks-data-collection/hq_data/hi/{folder_id}/{recording_id}_audio.wav
+# Old format: https://storage.googleapis.com/old-data-collection/hq_data/hi/{folder_id}/{recording_id}_audio.wav
 # New format: https://storage.googleapis.com/upload_goai/{folder_id}/{recording_id}_audio.wav
 
-OLD_BASE = "https://storage.googleapis.com/joshtalks-data-collection/hq_data/hi"
+OLD_BASE = "https://storage.googleapis.com/old-data-collection/hq_data/hi"
 NEW_BASE = "https://storage.googleapis.com/upload_goai"
 
 
@@ -32,7 +32,7 @@ def fix_gcs_url(old_url: str) -> str:
     """
     Convert old GCS URL format to new upload_goai format.
     
-    Old: https://storage.googleapis.com/joshtalks-data-collection/hq_data/hi/{folder}/{file}
+    Old: https://storage.googleapis.com/old-data-collection/hq_data/hi/{folder}/{file}
     New: https://storage.googleapis.com/upload_goai/{folder}/{file}
     """
     if OLD_BASE in old_url:

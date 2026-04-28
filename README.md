@@ -177,6 +177,7 @@ Lattice: [उसने] [चौदह | 14]   [किताबें | कित
 ```
 
 **Algorithm:**
+
 1. **Tokenize** all inputs (human reference + N model outputs)
 2. **Progressive MSA** — align each model to a growing master alignment using Needleman-Wunsch (character-level similarity scoring)
 3. **Trust mechanism** — words agreed upon by ≥3 models are added as valid lattice alternatives
@@ -389,5 +390,5 @@ This project was developed as a research assignment. All code is original work. 
 ---
 
 <p align="center">
-  <sub>Built with 🔬 by Rajeev — AI Researcher Intern Candidate, Josh Talks</sub>
+  <sub>Built with 🔬 by Rajeev </sub>
 </p>
