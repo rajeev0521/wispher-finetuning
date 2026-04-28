@@ -542,7 +542,7 @@ def dataset_stats(csv_path: str) -> Dict:
 
 if __name__ == "__main__":
     # Quick test
-    csv_path = os.path.join(os.path.dirname(__file__), '..', 'FT Data - data.csv')
+    csv_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'input', 'ft_data.csv')
     if os.path.exists(csv_path):
         stats = dataset_stats(csv_path)
         

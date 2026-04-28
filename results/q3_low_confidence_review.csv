@@ -1,51 +1,51 @@
-﻿word,classification,confidence,reason,layer
-खूमो,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-"सुगर,",incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-डीएस,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-मज़े,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-आजकाल।,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-सारेगामापा,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-रिक्मेडेशन,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-चार.चारचांद,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-डिग्रीया,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-अपङी,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-499में,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-क्वान्टिटी,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-नैनकी,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-मिश्टी,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-सलवार।,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-मैंबताता,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-किलियरली,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-पी_सी_ओ,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-इसकंबेहा,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-सौ_सौ,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-गेवशन,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-चॉकलेक,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-ठैके,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-हन्न,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-साहसा,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-कार्नेकी,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-प्रियांशी,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-भए,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-गिर्स,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-कैंचे-पैंचे,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-"करूँगी,फिर",incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-झपकी,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-भटा,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-किलाया,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-निकलाता,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-अधिव,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-।मेटा,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-तेजाब,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-जौश,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-व्हाइटे,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-काट-वाट,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-गाइडलाइन्ट्स,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-स्कॉलरशिप,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-एग्जाक्ट्ली,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-एंगरनेस,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-गोशालाएं,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-सूचता,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-अपनाएं।,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-निश्चिन,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
-हांपकवान,incorrect,low,"Not found in any dictionary or pattern — possibly misspelling, dialect, or unrecognized word",unknown
+word,classification,confidence,reason,layer,manual_verdict,manual_category
+निकदाओ,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,incorrect,"Misspelling — non-standard verb form, likely ASR error for 'निकालो'"
+कुचे,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,correct,"Correct — dialect word meaning 'narrow lanes' (कूचे), valid Urdu/Hindi"
+हुउउउ,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,incorrect,"Misspelling — elongated filler sound (ASR artifact of 'हूँ' or 'हुह')"
+सेलेंडर,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,incorrect,"Misspelling of 'सिलेंडर' (cylinder) — vowel error ए→इ"
+थू,correct,low,Short pure-Devanagari word (likely valid verb form or particle),short_word,correct,"Correct — exclamation expressing disgust (थू-थू)"
+टेंस्ड,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,correct,"Correct — English 'tensed' transliterated into Devanagari"
+ब्लिंक,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,correct,"Correct — English 'blink' transliterated"
+पैमो,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,incorrect,"Misspelling — non-standard form, possibly garbled 'पैसों' or 'पैमाने'"
+खुशनसीब,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,correct,"Correct — compound word 'खुशनसीब' (fortunate), valid Hindi/Urdu"
+कुलदीप,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,correct,"Correct — proper noun (person's name)"
+तरसाने,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,correct,"Correct — causative form of 'तरसना' (to pine/yearn)"
+देओल,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,correct,"Correct — proper noun (surname, e.g., Sunny Deol)"
+आई-टु-आई,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,correct,"Correct — English 'eye-to-eye' transliterated with hyphens"
+साड़,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,incorrect,"Misspelling — incomplete word, likely 'साड़ी' (saree) with dropped ending"
+टेंपलेट,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,correct,"Correct — English 'template' transliterated"
+ढ़ोल,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,incorrect,"Misspelling — should be 'ढोल' (drum); incorrect ढ़ (with nukta) is non-standard"
+कमेंटस,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,incorrect,"Misspelling of 'कमेंट्स' (comments) — missing halant in cluster"
+आरतियाँ,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,correct,"Correct — plural of 'आरती' (prayer ritual)"
+रीमार,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,incorrect,"Misspelling — garbled word, possibly 'रिमार्क' (remark) with dropped letters"
+फाइंस,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,incorrect,"Misspelling of 'फाइंड्स' (finds) or 'फाइनल' — unclear English transliteration"
+नहु,correct,low,Short pure-Devanagari word (likely valid verb form or particle),short_word,incorrect,"Misspelling — likely ASR error for 'नहीं' (no)"
+नाड़ाबेड,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,incorrect,"Misspelling — garbled compound, not a real word"
+कमेस्टी,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,incorrect,"Misspelling of 'केमिस्ट्री' (chemistry) — vowel and consonant errors"
+बैकबैंचर।,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,correct,"Correct — English 'back-bencher' transliterated (with attached punctuation)"
+बरोड़ा,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,correct,"Correct — proper noun (city: Vadodara/Baroda)"
+डिजीटल,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,incorrect,"Misspelling of 'डिजिटल' (digital) — extra ई matra"
+टहलों,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,correct,"Correct — verb form 'टहलों' (take a walk, imperative plural)"
+अंग्रेजन,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,incorrect,"Misspelling of 'अंग्रेजों' (the British) — wrong ending"
+हतोड़ी,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,correct,"Correct — dialect/colloquial word for 'हथौड़ी' (small hammer)"
+स्काईफाई,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,correct,"Correct — English 'sci-fi' transliterated"
+रिस्टरों,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,incorrect,"Misspelling — unclear word, possibly garbled 'रजिस्टरों' (registers)"
+करवाये,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,correct,"Correct — causative past form of 'करवाना' (to get done)"
+परयोगताये,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,incorrect,"Misspelling of 'प्रतियोगिताएँ' (competitions) — severely garbled"
+मूर्ती,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,incorrect,"Misspelling of 'मूर्ति' (idol/statue) — wrong ending vowel ती→ति"
+टेवल्थ,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,incorrect,"Misspelling — garbled English word, possibly 'twelfth' or 'wealth'"
+आ-अब,correct,low,Short pure-Devanagari word (likely valid verb form or particle),short_word,incorrect,"Misspelling — joined/broken words 'आ' and 'अब', wrong hyphenation"
+हावभाव,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,correct,"Correct — compound word 'हाव-भाव' (gestures/expressions)"
+अक्षा,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,correct,"Correct — proper noun (person's name, e.g., Aksha)"
+कुलफी,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,correct,"Correct — variant spelling of 'कुल्फी' (Indian frozen dessert)"
+इंपायर,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,incorrect,"Misspelling of 'एम्पायर' (empire) — wrong vowel at start"
+ईवोलूसन,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,incorrect,"Misspelling of 'इवोल्यूशन' (evolution) — wrong transliteration"
+लिची,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,correct,"Correct — 'लीची' variant spelling for the fruit 'lychee'"
+दकाबा,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,incorrect,"Misspelling — garbled word, not a valid Hindi word"
+भूखतना,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,incorrect,"Misspelling — garbled, possibly 'भूखा' (hungry) + 'रहना' merged incorrectly"
+खाका,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,correct,"Correct — valid Hindi word 'खाका' (blueprint/sketch)"
+कड़के,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,correct,"Correct — verb form 'कड़के' (thundered) from 'कड़कना'"
+किप,correct,low,Short pure-Devanagari word (likely valid verb form or particle),short_word,correct,"Correct — English 'keep' transliterated (colloquial usage)"
+झट,correct,low,Short pure-Devanagari word (likely valid verb form or particle),short_word,correct,"Correct — valid Hindi word meaning 'quickly/instantly' (झट से)"
+आहत,correct,low,Short pure-Devanagari word (likely valid verb form or particle),short_word,correct,"Correct — valid Hindi word meaning 'hurt/wounded' (emotionally)"
+खींचेगे,incorrect,low,"Not found in dictionary — possibly misspelling, dialect, proper noun, or rare word",unknown_devanagari,incorrect,"Misspelling of 'खींचेंगे' (will pull) — missing nasalization"
